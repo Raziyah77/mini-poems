@@ -1,16 +1,66 @@
-# React + Vite
+# Mini Poems
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Mini Poems is a simple React web app that generates short quotes based on a selected theme such as love, life, or motivation.  
+It is part of my ALX Front-End Capstone Project and focuses on React basics, API fetching, and Tailwind CSS styling.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- Choose a theme (love, life, motivation)
+- Generate random quotes based on the theme
+- Display quote and author on the main screen
+- Navigation buttons (Next and Previous)
+- Built with React and styled using Tailwind CSS
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Tools and Technologies
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React (Vite)
+- Tailwind CSS
+- JavaScript (ES6)
+- Quotable API
+
+---
+
+## Folder Structure
+
+mini-poems/
+│
+├── src/
+│ ├── components/ # Landing Page and small reusable parts
+│ ├── pages/ # Main screen and other pages
+│ ├── assets/ # Images or icons
+│ ├── App.jsx
+│ ├── main.jsx
+│ └── index.css
+│
+└── package.json
+
+---
+
+## How to Run
+
+1. Clone the repository
+
+git clone https://github.com/Raziyah77/mini-poems.git
+
+2. Go to the project folder
+
+cd mini-poems
+
+3. Install dependencies
+
+npm install
+
+4. Start the development server
+
+npm run dev
+
+The app will run on your local server, usually at http://localhost:5173/
+
+Author
+
+Raziyah Mwihaki Norah
+ALX Front-End Web Development Program
