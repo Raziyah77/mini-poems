@@ -1,43 +1,32 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-export default function LandingPage() {
+function LandingPage({ onGenerate }) {
   const [theme, setTheme] = useState("");
-  const navigate = useNavigate();
 
-  const handleGenerate = () => {
-    if (theme.trim() !== "") {
-      navigate(`/main?theme=${theme}`);
-    } else {
-      alert("Please enter a theme to get started!");
-    }
+  const handleClick = () => {
+    const cleanedTheme =
+      !theme || theme.trim() === "" ? "random" : theme.trim().toLowerCase();
+    onGenerate(cleanedTheme);
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-r from-purple-200 to-blue-100 text-gray-800">
-      <h1 className="text-4xl font-bold mb-8">Mini Poems ✨</h1>
-
-      <p className="text-lg mb-6 text-gray-700 text-center max-w-md">
-        A collection of short, meaningful lines — powered by the Quotable API.
-        Enter a theme like <span className="font-semibold">love</span>,{" "}
-        <span className="font-semibold">life</span>, or{" "}
-        <span className="font-semibold">motivation</span>.
-      </p>
-
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-pink-200 via-purple-200 to-blue-200">
+      <h1 className="text-3xl font-bold mb-6">Mini Poems Generator</h1>
       <input
         type="text"
+        placeholder="Enter a theme (e.g. love, life, motivation)"
         value={theme}
         onChange={(e) => setTheme(e.target.value)}
-        placeholder="Enter a theme..."
-        className="border border-gray-300 rounded-lg px-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-blue-400"
+        className="text-black px-4 py-2 rounded-lg w-72 mb-4"
       />
-
       <button
-        onClick={handleGenerate}
-        className="mt-6 bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow-md transition duration-300"
+        onClick={handleClick}
+        className="bg-white text-pink-600 px-6 py-2 rounded-lg font-semibold hover:bg-pink-100"
       >
         Generate
       </button>
     </div>
   );
 }
+
+export default LandingPage;
