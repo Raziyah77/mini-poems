@@ -9,21 +9,19 @@ function MainScreen({ theme }) {
   const fetchQuote = async () => {
     setLoading(true);
     try {
-      // correct backticks for template literal
-      const response = await fetch(`http://localhost:5000/api/quote?theme=${theme}`);
+      const response = await fetch("http://localhost:5000/api/quote");
       const data = await response.json();
 
-      const mapped = {
-        content: data.content,
-        author: data.author
-      };
+      // ZenQuotes returns array with {q, a}
+      const quoteObj = data[0];
+      const mapped = { content: quoteObj.q, author: quoteObj.a };
 
-      setHistory(prev => [...prev, mapped]);
-      setIndex(prev => prev + 1);
+      setHistory((prev) => [...prev, mapped]);
+      setIndex((prev) => prev + 1);
       setQuote(mapped);
     } catch (error) {
       console.error("Error fetching quote:", error);
-      setQuote({ content: "Could not fetch quote. Try again.", author: "System" });
+      setQuote({ content: "Could not fetch quote. Try again.", author: "" });
     } finally {
       setLoading(false);
     }
@@ -50,7 +48,7 @@ function MainScreen({ theme }) {
   }, [theme]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-purple-200 via-pink-200 to-yellow-200">
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-pink-200 to-purple-200">
       <h2 className="text-2xl font-bold mb-4">Theme: {theme}</h2>
 
       <div className="bg-white text-black rounded-lg p-6 w-96 shadow-lg text-center">
@@ -59,7 +57,7 @@ function MainScreen({ theme }) {
         ) : quote ? (
           <>
             <p className="text-lg font-semibold mb-2">{quote.content}</p>
-            <p className="text-sm font-medium">— {quote.author}</p>
+            <p className="text-sm font-medium">— {quote.author || "Unknown"}</p>
           </>
         ) : (
           <p>No quotes yet.</p>
@@ -78,7 +76,6 @@ function MainScreen({ theme }) {
         >
           Previous
         </button>
-
         <button
           onClick={handleNext}
           className="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50"
@@ -91,3 +88,4 @@ function MainScreen({ theme }) {
 }
 
 export default MainScreen;
+
