@@ -1,69 +1,101 @@
-import React, { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
-const MainScreen = ({ theme }) => {
-  const [quotes, setQuotes] = useState([]);
-  const [index, setIndex] = useState(0);
+function MainScreen({ theme }) {
+  const [quote, setQuote] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [history, setHistory] = useState([]);
+  const [index, setIndex] = useState(0);
 
   const fetchQuote = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`https://api.quotable.io/random?tags=${theme}`);
+      // FIXED: Use backticks for proper theme interpolation
+      const response = await fetch(`http://localhost:5000/api/quote?theme=${theme}`);
       const data = await response.json();
-      const newQuote = { content: data.content, author: data.author };
+      const mapped = {
+        content: data.content || data.q || "No content",
+        author: data.author || data.a || "Unknown"
+      };
 
-      setQuotes((prev) => [...prev, newQuote]);
-      setIndex((prev) => prev + 1);
+      // Add new quote to history only if different from last
+      setHistory(prev => {
+        if (prev.length === 0 || prev[prev.length - 1].content !== mapped.content) {
+          return [...prev, mapped];
+        }
+        return prev;
+      });
+
+      setQuote(mapped);
+      setIndex(prev => history.length); // show newest
     } catch (error) {
       console.error("Error fetching quote:", error);
+      setQuote({ content: "Could not fetch quote. Try again.", author: "" });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
+  };
+
+  const handleNext = () => {
+    if (index < history.length - 1) {
+      setQuote(history[index + 1]);
+      setIndex(index + 1);
+    } else {
+      fetchQuote();
+    }
+  };
+
+  const handlePrev = () => {
+    if (index > 0) {
+      setQuote(history[index - 1]);
+      setIndex(index - 1);
+    }
   };
 
   useEffect(() => {
+    setHistory([]); // reset history when theme changes
+    setIndex(0);
     fetchQuote();
   }, [theme]);
 
-  const handlePrevious = () => {
-    if (index > 1) setIndex(index - 1);
-  };
-
-  const current = quotes[index - 1];
-
   return (
-    <div className="flex flex-col justify-center items-center h-screen bg-gradient-to-r from-indigo-400 to-pink-500 text-white text-center p-5">
-      <h2 className="text-2xl font-semibold mb-4 capitalize">
-        Theme: {theme || "random"}
-      </h2>
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-pink-200 to-purple-300">
+      <h2 className="text-2xl font-bold mb-4">Theme: {theme}</h2>
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : current ? (
-        <>
-          <p className="text-xl italic mb-4 max-w-2xl">"{current.content}"</p>
-          <p className="text-lg font-medium">— {current.author}</p>
-        </>
-      ) : (
-        <p>No quotes yet...</p>
-      )}
+      <div className="bg-white text-black rounded-lg p-6 w-96 shadow-lg text-center">
+        {loading ? (
+          <p>Loading...</p>
+        ) : quote ? (
+          <>
+            <p className="text-lg">{quote.content}</p>
+            <p className="text-sm font-medium mt-2">— {quote.author}</p>
+          </>
+        ) : (
+          <p>No quotes yet.</p>
+        )}
+      </div>
 
-      <div className="flex gap-4 mt-6">
+      <div className="mt-6 flex gap-4">
         <button
-          onClick={handlePrevious}
-          disabled={index <= 1}
-          className="bg-white text-indigo-600 px-4 py-2 rounded-lg font-semibold disabled:opacity-50"
+          onClick={handlePrev}
+          disabled={index === 0}
+          className={`px-4 py-2 rounded-lg ${
+            index === 0
+              ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+              : "bg-white text-blue-600 hover:bg-blue-50"
+          }`}
         >
           Previous
         </button>
+
         <button
-          onClick={fetchQuote}
-          className="bg-white text-pink-600 px-4 py-2 rounded-lg font-semibold"
+          onClick={handleNext}
+          className="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50"
         >
           Next
         </button>
       </div>
     </div>
   );
-};
+}
 
 export default MainScreen;
