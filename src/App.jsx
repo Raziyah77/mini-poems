@@ -1,28 +1,18 @@
-import { useState } from "react";
-import LandingPage from "./components/LandingPage";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LandingPage from "./pages/LandingPage";
 import MainScreen from "./pages/MainScreen";
+import FavouritesPage from "./pages/FavouritesPage"; // will create this next
 
 function App() {
-  const [theme, setTheme] = useState("");
-  const [showMain, setShowMain] = useState(false);
-
-  const handleGenerate = (selectedTheme) => {
-    const cleanedTheme =
-      !selectedTheme || selectedTheme.trim() === ""
-        ? "random"
-        : selectedTheme.toLowerCase();
-    setTheme(cleanedTheme);
-    setShowMain(true);
-  };
-
   return (
-    <>
-      {showMain ? (
-        <MainScreen theme={theme} />
-      ) : (
-        <LandingPage onGenerate={handleGenerate} />
-      )}
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/main" element={<MainScreen />} />
+        <Route path="/favourites" element={<FavouritesPage />} />
+      </Routes>
+    </Router>
   );
 }
 
