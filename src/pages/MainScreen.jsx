@@ -1,45 +1,34 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
-function MainScreen({ theme }) {
-  const [quote, setQuote] = useState(null);
+function MainScreen() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const theme = location.state?.theme || "life";
+
+  const [quote, setQuote] = useState("");
+  const [author, setAuthor] = useState("");
   const [loading, setLoading] = useState(false);
-  const [history, setHistory] = useState([]);
-  const [index, setIndex] = useState(0);
 
   const fetchQuote = async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/api/quote");
+      const response = await fetch(`https://zenquotes.io/api/random`);
       const data = await response.json();
 
-      // ZenQuotes returns array with {q, a}
-      const quoteObj = data[0];
-      const mapped = { content: quoteObj.q, author: quoteObj.a };
-
-      setHistory((prev) => [...prev, mapped]);
-      setIndex((prev) => prev + 1);
-      setQuote(mapped);
+      if (data && data[0]) {
+        setQuote(data[0].q);
+        setAuthor(data[0].a);
+      } else {
+        setQuote("No quote found.");
+        setAuthor("Unknown");
+      }
     } catch (error) {
       console.error("Error fetching quote:", error);
-      setQuote({ content: "Could not fetch quote. Try again.", author: "" });
+      setQuote("Failed to fetch quote.");
+      setAuthor("Error");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleNext = () => {
-    if (index < history.length) {
-      setQuote(history[index]);
-      setIndex(index + 1);
-    } else {
-      fetchQuote();
-    }
-  };
-
-  const handlePrev = () => {
-    if (index > 1) {
-      setQuote(history[index - 2]);
-      setIndex(index - 1);
     }
   };
 
@@ -47,45 +36,61 @@ function MainScreen({ theme }) {
     fetchQuote();
   }, [theme]);
 
-  return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-b from-pink-200 to-purple-200">
-      <h2 className="text-2xl font-bold mb-4">Theme: {theme}</h2>
+  // Add current quote to favourites
+  const addToFavourites = () => {
+    const favourites = JSON.parse(localStorage.getItem("favourites")) || [];
+    const newFavourite = { quote, author };
+    favourites.push(newFavourite);
+    localStorage.setItem("favourites", JSON.stringify(favourites));
+    alert("Added to favourites!");
+  };
 
-      <div className="bg-white text-black rounded-lg p-6 w-96 shadow-lg text-center">
+  return (
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6">
+      <h1 className="text-3xl font-bold mb-6">Mini Poems - Theme: {theme}</h1>
+
+      <div className="w-full max-w-lg bg-gray-800 rounded-xl p-6 shadow-lg text-center">
         {loading ? (
           <p>Loading...</p>
-        ) : quote ? (
-          <>
-            <p className="text-lg font-semibold mb-2">{quote.content}</p>
-            <p className="text-sm font-medium">— {quote.author || "Unknown"}</p>
-          </>
         ) : (
-          <p>No quotes yet.</p>
-        )}
-      </div>
+          <>
+            <p className="text-xl italic mb-4">"{quote}"</p>
+            <p className="text-sm text-gray-400 mb-6">— {author}</p>
 
-      <div className="mt-6 flex gap-4">
-        <button
-          onClick={handlePrev}
-          disabled={index <= 1}
-          className={`px-4 py-2 rounded-lg ${
-            index <= 1
-              ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-              : "bg-white text-blue-600 hover:bg-blue-50"
-          }`}
-        >
-          Previous
-        </button>
-        <button
-          onClick={handleNext}
-          className="bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50"
-        >
-          Next
-        </button>
+            <div className="flex flex-wrap justify-center gap-4">
+              <button
+                onClick={addToFavourites}
+                className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg"
+              >
+                Add to Favourites
+              </button>
+
+              <button
+                onClick={fetchQuote}
+                className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg"
+              >
+                Next
+              </button>
+
+              <button
+                onClick={() => navigate("/")}
+                className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg"
+              >
+                Back to Landing Page
+              </button>
+
+              <button
+                onClick={() => navigate("/favourites")}
+                className="bg-purple-500 hover:bg-purple-600 px-4 py-2 rounded-lg"
+              >
+                Go to Favourites
+              </button>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
 }
 
 export default MainScreen;
-
