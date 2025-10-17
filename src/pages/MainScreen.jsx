@@ -15,12 +15,12 @@ function MainScreen() {
   
   const fetchQuote = async () => {
     try {
-      console.log("🔍 Fetching quote from ZenQuotes API...");
+      console.log("Fetching quote from ZenQuotes API...");
       const response = await fetch("http://localhost:5000/api/quote");
       if (!response.ok) throw new Error("Failed to fetch quote");
 
       const data = await response.json();
-      console.log("✅ Fetched data:", data);
+      console.log("Fetched data:", data);
 
       if (data && data.length > 0) {
         const newQuote = { q: data[0].q, a: data[0].a };
@@ -35,7 +35,7 @@ function MainScreen() {
         setAuthor("Unknown");
       }
     } catch (error) {
-      console.error("❌ Fetch error:", error);
+      console.error("Fetch error:", error);
       setQuote("Could not fetch quote. Try again later.");
       setAuthor("Error");
     }
@@ -46,7 +46,7 @@ function MainScreen() {
     fetchQuote();
   }, [location]);
 
-  // Navigation handlers
+  
   const handleNext = () => {
     if (index < history.length - 1) {
       const nextIndex = index + 1;
@@ -79,9 +79,9 @@ function MainScreen() {
     const updated = [...existing, { q: quote, a: author }];
     setFavourites(updated);
     localStorage.setItem("favourites", JSON.stringify(updated));
-    console.log("⭐ Added to favourites:", quote);
+    console.log("Added to favourites:", quote);
   } else {
-    console.log("⚠️ Quote already in favourites:", quote);
+    console.log("Quote already in favourites:", quote);
   }
 };
 

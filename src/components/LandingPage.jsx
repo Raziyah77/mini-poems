@@ -9,7 +9,7 @@ function LandingPage() {
     const cleanedTheme =
       !theme || theme.trim() === "" ? "random" : theme.trim().toLowerCase();
 
-    // Navigate to MainScreen and pass the theme
+    
     navigate("/main", { state: { theme: cleanedTheme } });
   };
 
