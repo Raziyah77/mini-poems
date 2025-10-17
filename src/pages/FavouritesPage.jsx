@@ -1,62 +1,82 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function FavouritesPage() {
-  const [favourites, setFavourites] = useState([]);
   const navigate = useNavigate();
+  const [favourites, setFavourites] = useState(
+    JSON.parse(localStorage.getItem("favourites")) || []
+  );
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Load favourites from localStorage when the component mounts
-  useEffect(() => {
-    const savedFavourites = JSON.parse(localStorage.getItem("favourites")) || [];
-    setFavourites(savedFavourites);
-  }, []);
-
-  // Remove quote from favourites
-  const removeFavourite = (index) => {
-    const updated = favourites.filter((_, i) => i !== index);
-    setFavourites(updated);
-    localStorage.setItem("favourites", JSON.stringify(updated));
+  const handleNext = () => {
+    if (currentIndex < favourites.length - 1)
+      setCurrentIndex((prev) => prev + 1);
   };
 
+  const handlePrevious = () => {
+    if (currentIndex > 0) setCurrentIndex((prev) => prev - 1);
+  };
+
+  const handleRemove = () => {
+    const updated = favourites.filter((_, i) => i !== currentIndex);
+    setFavourites(updated);
+    localStorage.setItem("favourites", JSON.stringify(updated));
+    if (currentIndex >= updated.length && updated.length > 0)
+      setCurrentIndex(updated.length - 1);
+  };
+
+  const currentQuote = favourites[currentIndex];
+
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center justify-center p-6">
-      <h1 className="text-3xl font-bold mb-6 text-center">Your Favourite Poems</h1>
+    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-pink-500 to-purple-600 text-white text-center px-6">
+      <h1 className="text-2xl font-bold mb-4">Your Favourites</h1>
 
       {favourites.length === 0 ? (
-        <p className="text-gray-400">No favourites yet.</p>
+        <p>No favourites added yet.</p>
       ) : (
-        <div className="w-full max-w-lg space-y-6">
-          {favourites.map((item, index) => (
-            <div
-              key={index}
-              className="border border-gray-700 rounded-xl p-4 bg-gray-800 shadow-lg"
+        <>
+          <div className="bg-white/20 p-6 rounded-2xl max-w-md">
+            <p className="text-lg italic mb-4">"{currentQuote.q}"</p>
+            <p className="font-bold mb-6">— {currentQuote.a}</p>
+          </div>
+
+          <div className="flex gap-4 mt-6">
+            <button
+              onClick={handlePrevious}
+              disabled={currentIndex === 0}
+              className="bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-gray-100 disabled:opacity-50"
             >
-              <p className="text-lg mb-2">"{item.quote}"</p>
-              <p className="text-sm text-gray-400 mb-4">— {item.author}</p>
-              <button
-                onClick={() => removeFavourite(index)}
-                className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-white"
-              >
-                Remove from Favourites
-              </button>
-            </div>
-          ))}
-        </div>
+              Previous
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={currentIndex >= favourites.length - 1}
+              className="bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-gray-100 disabled:opacity-50"
+            >
+              Next
+            </button>
+            <button
+              onClick={handleRemove}
+              className="bg-white text-purple-600 px-4 py-2 rounded-lg hover:bg-gray-100"
+            >
+              Remove
+            </button>
+          </div>
+        </>
       )}
 
-      {/* Navigation buttons */}
-      <div className="flex gap-4 mt-8">
-        <button
-          onClick={() => navigate("/")}
-          className="bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-lg"
-        >
-          Go to Landing Page
-        </button>
+      <div className="flex gap-4 mt-6">
         <button
           onClick={() => navigate("/main")}
-          className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg"
+          className="underline hover:text-gray-200"
         >
-          Back to Main Screen
+          Back to MainScreen
+        </button>
+        <button
+          onClick={() => navigate("/")}
+          className="underline hover:text-gray-200"
+        >
+          Back to Landing Page
         </button>
       </div>
     </div>
