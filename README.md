@@ -26,17 +26,18 @@ It is part of my ALX Front-End Capstone Project and focuses on React basics, API
 
 ## Folder Structure
 
+```
 mini-poems/
-│
 ├── src/
-│ ├── components/ # Landing Page and small reusable parts
-│ ├── pages/ # Main screen and other pages
-│ ├── assets/ # Images or icons
-│ ├── App.jsx
-│ ├── main.jsx
-│ └── index.css
-│
-└── package.json
+│   ├── components/       # Landing Page and small reusable parts
+│   ├── pages/            # Main screen, Favourites page, etc.
+│   ├── assets/           # Images, icons, or fonts
+│   ├── App.jsx
+│   ├── main.jsx
+│   ├── index.css
+│   └── package.json
+```
+
 
 ---
 
@@ -60,7 +61,28 @@ npm run dev
 
 The app will run on your local server, usually at http://localhost:5173/
 
-Author
+---
+
+## Challenges Faced
+
+API fetch issues due to DNS problems
+
+Ensuring theme input passes correctly between components
+
+Styling consistency with Tailwind CSS
+
+---
+
+## Next Steps
+
+Add a Favorites page
+
+Allow saving favorite quotes locally
+
+Improve page transitions and error handling
+
+
+## Author
 
 Raziyah Mwihaki Norah
 ALX Front-End Web Development Program
