@@ -75,11 +75,11 @@ Styling consistency with Tailwind CSS
 
 ## Next Steps
 
-Add a Favorites page
+Fix the theme issue to make the generated quotes align with user's selected theme.
 
-Allow saving favorite quotes locally
+Add more images and styling.
 
-Improve page transitions and error handling
+Use real poems instead of short quotes 
 
 
 ## Author
